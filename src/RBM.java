@@ -174,24 +174,21 @@ public class RBM {
     
     public static void main(String[] args) {
     	// sanityCheck();
-    	
     	String filename = "rbm.uai";
+   
     	int visN = 784;
     	int hidN = 1000;
     	int batchSize = 100;
-    	int nBatch = 10;
+    	int nBatches = 600;
+    	int maxepoch = 10;
+
     	RBM rbm = new RBM(filename, visN, hidN);
-    	RBMTrainerBP rbmTrain = new RBMTrainerBP(rbm, 10);
+    	RBMTrainerBP rbmTrain = new RBMTrainerBP(rbm, maxepoch);
     	rbmTrain.initialization(visN, hidN, batchSize);
-    	double[][][] data = new double[nBatch][batchSize][visN];
     	
-    	for (int n = 0; n < nBatch; n++)
-	    	for (int b = 0; b < batchSize; b++) {
-	    		for (int i = 0; i < visN; i++) {
-	    			data[n][b][i] = Math.random() > 0.5 ? 1 : 0;
-	    		}
-	    	}
+    	Data data = new Data(nBatches, batchSize, visN);
+    	data.readFromFile("mnist.txt"); 	
     	
-    	rbmTrain.stochasticGradientTrain(rbm, data);
+    	rbmTrain.stochasticGradientTrain(rbm, data.getData());
     }
 }
