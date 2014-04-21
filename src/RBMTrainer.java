@@ -72,6 +72,8 @@ public class RBMTrainer {
 		Algebra.sumRows(batch, posvisact);
 	}
 	
+
+	
 	public void computeGradientNeg(RBM rbm, double[][] batch) {
 		rbm.binaryStates(poshidprobs, poshidstates);
 		rbm.hidToVisBatch(poshidstates, negdata);

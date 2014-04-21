@@ -17,6 +17,13 @@ public class Data {
 		this.dim = dim;
 	}
 	
+	public Data(double[][][] batchdata) {
+		this.batchdata = batchdata;
+		this.batches = batchdata.length;
+		this.cases = batchdata[0].length;
+		this.dim = batchdata[0][0].length;
+	}
+	
 	public double[][][] getData() {
 		return batchdata;
 	}

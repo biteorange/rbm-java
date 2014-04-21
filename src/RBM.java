@@ -160,6 +160,15 @@ public class RBM {
 		}
 	}
 	
+	public double[][][] nextLayerData(double[][][] batchdata) {
+		int nBatches = batchdata.length;
+		int batchSize = batchdata[0].length;
+		double[][][] nextLayer = new double[nBatches][batchSize][hidN];
+		for (int b = 0; b < nBatches; b++)
+			visToHidBatch(batchdata[b], nextLayer[b]);
+		return nextLayer;
+	}
+	
 	public static void sanityCheck() {
 		RBM rbm = new RBM("small.uai", 5, 10);
 		RBMTrainerBP rbmTrain = new RBMTrainerBP(rbm, 10);
