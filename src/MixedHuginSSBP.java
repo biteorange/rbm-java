@@ -1,5 +1,8 @@
+import java.util.Arrays;
+
 import il2.inf.bp.*;
 import il2.inf.bp.schedules.MessagePassingScheduler;
+import il2.model.Domain;
 import il2.model.Table;
 import il2.util.IntSet;
 import il2.util.Pair;
@@ -23,11 +26,21 @@ public class MixedHuginSSBP extends BeliefPropagation {
     	initializeMessageProducts();
     }
     
+    public Table[] getMessageProducts() {
+    	return messageProducts;
+    }
+    
+    public static Table unitTable(Domain d, int var) {
+    	Table res = Table.varTable(d, var);
+    	Arrays.fill(res.values(), 1);
+    	return res;
+    }
+    
     // initializing the message product table 
     private void initializeMessageProducts() {
     	messageProducts = new Table[domain.size()];
     	for (int var = 0; var < domain.size(); var++) { 
-    		messageProducts[var] = Table.varTable(domain,  var);
+    		messageProducts[var] = unitTable(domain,  var);
     		messageProducts[var].normalizeInPlace();
     	}
     }
@@ -39,7 +52,7 @@ public class MixedHuginSSBP extends BeliefPropagation {
     	// factor-to-variable
     	if (pair.s1 > pair.s2) {
     		Table[] tabs = collectTables(pair);
-    		msg = Table.varTable(domain,var);
+    		msg = unitTable(domain,var);
     		msg.multiplyAndProjectInto(tabs);
     		
     		// update messageProducts[varNode]

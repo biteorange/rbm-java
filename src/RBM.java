@@ -15,6 +15,10 @@ import il2.inf.Algorithm.Order2JoinTree;
 
 import il2.inf.bp.BeliefPropagation;
 import il2.inf.bp.MaxProduct;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +43,7 @@ public class RBM {
 	public RBM(String filename, int visN, int hidN) {
 		long startTime = System.nanoTime();
 		rbm = UaiConverter.uaiToBayesianNetwork(filename);
-		System.out.println("finish reading network in "+ (System.nanoTime()-startTime)/1000000000.0);
+		System.out.println("finish reading network "+filename+" in "+ (System.nanoTime()-startTime)/1000000000.0);
 		this.visN = visN;
 		this.hidN = hidN;
 		assert(visN+hidN+visN*hidN == rbm.cpts().length);
@@ -57,9 +61,10 @@ public class RBM {
 			visParams[i] = tabularToExp(cpts[i].values());
 		for (int i = 0; i < hidN; i++)
 			hidParams[i] = tabularToExp(cpts[visN+i].values());
+		System.out.println(visN+" "+hidN);
 		for (int i = 0; i < visN; i++) {
 			for (int j = 0; j < hidN; j++) {
-				vishidParams[i][j] = tabularToExp(cpts[visN+hidN+i*visN+j].values());
+				vishidParams[i][j] = tabularToExp(cpts[visN+hidN+i*hidN+j].values());
 			}
 		}
 	}
@@ -83,7 +88,7 @@ public class RBM {
 		for (int i = 0; i < visN; i++) {
 			for (int j = 0; j < hidN; j++) {
 				vishidParams[i][j] += vishidinc[i][j];
-				expToTabular(vishidParams[i][j], cpts[visN+hidN+i*visN+j].values());
+				expToTabular(vishidParams[i][j], cpts[visN+hidN+i*hidN+j].values());
 			}
 		}
 		for (int i = 0; i < visN; i++) { 
@@ -171,7 +176,9 @@ public class RBM {
 	
 	public static void sanityCheck() {
 		RBM rbm = new RBM("small.uai", 5, 10);
+
 		RBMTrainerBP rbmTrain = new RBMTrainerBP(rbm, 10);
+		// RBMTrainer rbmTrain = new RBMTrainer(10);
 		rbmTrain.initialization(5, 10, 3);
 		double[][][] batchdata = new double[1][3][5];
 		for (int i = 0; i < 3; i++)
@@ -179,10 +186,38 @@ public class RBM {
 		batchdata[0][0][3] = 0; batchdata[0][0][4] = 0;
 		batchdata[0][1][4] = 0;
 		rbmTrain.stochasticGradientTrain(rbm, batchdata);
+		rbm.toFile("trained.txt");		
+		
+		StackRBMTrainer stack = new StackRBMTrainer("small1.uai",5,10,"small2.uai",4,"small3.uai",3);
+		stack.layerTrain(batchdata);
+		
+	}
+	
+	public void toFile(String filename) {
+		try (PrintStream output = new PrintStream(new File(filename))) {
+			for (int vis = 0; vis < visN; vis++) {
+				output.print(visParams[vis]+" ");
+			}
+			output.println("");
+			for (int hid = 0; hid < hidN; hid++) {
+				output.print(hidParams[hid]+" ");
+			}
+			output.println("");
+			for (int vis = 0; vis < visN; vis++) {
+				for (int hid = 0; hid < hidN; hid++)
+					output.print(vishidParams[vis][hid]+" ");
+				output.println("");
+			}
+			output.close();
+		}catch (FileNotFoundException e) {
+	            e.printStackTrace();
+	        }
 	}
     
     public static void main(String[] args) {
-    	// sanityCheck();
+    	sanityCheck();
+    	
+    	/*
     	String filename = "rbm.uai";
    
     	int visN = 784;
@@ -199,5 +234,6 @@ public class RBM {
     	data.readFromFile("mnist.txt"); 	
     	
     	rbmTrain.stochasticGradientTrain(rbm, data.getData());
+    	*/
     }
 }

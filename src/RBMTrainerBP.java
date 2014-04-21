@@ -26,14 +26,14 @@ public class RBMTrainerBP extends RBMTrainer{
 		int N = data.length;
 		int visN = rbm.visN; int hidN = rbm.hidN;
 		for (int i = 0; i < visN; i++) {
-			negvisact[i] = N * last(ie.tableConditional(i).values());
+			negvisact[i] = N * last(ie.tableJoint(i).values());
 		}
 		for (int j = 0; j < hidN; j++) {
-			neghidact[j] = N * last(ie.tableConditional(visN+j).values());
+			neghidact[j] = N * last(ie.tableJoint(visN+j).values());
 		}
 		for (int i = 0; i < visN; i++) {
 			for (int j = 0; j < hidN; j++) {
-				negprobs[i][j] = N * last(ie.tableConditional(visN+hidN+i*visN+j).values());
+				negprobs[i][j] = N * last(ie.tableJoint(visN+hidN+i*hidN+j).values());
 			}
 		}
 	}
