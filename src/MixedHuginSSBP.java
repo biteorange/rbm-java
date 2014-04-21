@@ -8,6 +8,11 @@ import il2.util.IntSet;
 import il2.util.Pair;
 
 /*
+ * Check-list
+ * 1. messages are initialized only once (checked)
+ * 2. normalization to cost underflow ?
+ */
+/*
  * Using Hugin for variable-to-factor message computation, while
  * SS for factor-to-variable message computation.
  */
@@ -67,6 +72,11 @@ public class MixedHuginSSBP extends BeliefPropagation {
     		msg.divideRelevantInto(messages.get(pair).values());
     	}
     	msg.normalizeInPlace();
+    	/*
+    	if (Double.isNaN(msg.sum())) {
+    		System.out.println("aaa");
+    	}
+    	*/
 		return msg;		
     }
 

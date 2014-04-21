@@ -3,7 +3,7 @@ import il2.model.Table;
 
 public class RBMTrainerBP extends RBMTrainer{
     // ED-BP (RCR) settings:
-	public int    maxIterations = 1;
+	public int    maxIterations = 100;
 	public long   timeoutMillis = 0;    //no time-out
 	public double convThreshold = 1e-4;
 	
@@ -26,14 +26,14 @@ public class RBMTrainerBP extends RBMTrainer{
 		int N = data.length;
 		int visN = rbm.visN; int hidN = rbm.hidN;
 		for (int i = 0; i < visN; i++) {
-			negvisact[i] = N * last(ie.tableJoint(i).values());
+			negvisact[i] = N * last(ie.tableConditional(i).values());
 		}
 		for (int j = 0; j < hidN; j++) {
-			neghidact[j] = N * last(ie.tableJoint(visN+j).values());
+			neghidact[j] = N * last(ie.tableConditional(visN+j).values());
 		}
 		for (int i = 0; i < visN; i++) {
 			for (int j = 0; j < hidN; j++) {
-				negprobs[i][j] = N * last(ie.tableJoint(visN+hidN+i*hidN+j).values());
+				negprobs[i][j] = N * last(ie.tableConditional(visN+hidN+i*hidN+j).values());
 			}
 		}
 	}
@@ -46,5 +46,6 @@ public class RBMTrainerBP extends RBMTrainer{
 	public void trainBatch(RBM rbm, double[][] batch) {
 		super.trainBatch(rbm, batch);
 		rbm.updateBPTables(ie);
+		System.out.println("BP residual "+ ie.residual());
 	}
 }

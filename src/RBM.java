@@ -218,6 +218,8 @@ public class RBM {
     
     public static void main(String[] args) {
     	// sanityCheck();
+    	
+    	
     	int nBatches = 600;
     	int batchSize = 100;
     	Data data = new Data(nBatches, batchSize, 784);
@@ -229,23 +231,5 @@ public class RBM {
 		StackRBMTrainer stack = new StackRBMTrainer("rbm1.uai",784, layer1,"rbm2.uai",layer2,"rbm3.uai",layer3);
 		stack.layerTrain(data.getData());
     	
-    	/*
-    	String filename = "rbm.uai";
-   
-    	int visN = 784;
-    	int hidN = 1000;
-    	int batchSize = 100;
-    	int nBatches = 600;
-    	int maxepoch = 10;
-
-    	RBM rbm = new RBM(filename, visN, hidN);
-    	RBMTrainerBP rbmTrain = new RBMTrainerBP(rbm, maxepoch);
-    	rbmTrain.initialization(visN, hidN, batchSize);
-    	
-    	Data data = new Data(nBatches, batchSize, visN);
-    	data.readFromFile("mnist.txt"); 	
-    	
-    	rbmTrain.stochasticGradientTrain(rbm, data.getData());
-    	*/
     }
 }
