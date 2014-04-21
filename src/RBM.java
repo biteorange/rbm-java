@@ -16,6 +16,7 @@ import il2.inf.Algorithm.Order2JoinTree;
 import il2.inf.bp.BeliefPropagation;
 import il2.inf.bp.MaxProduct;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -194,7 +195,8 @@ public class RBM {
 	}
 	
 	public void toFile(String filename) {
-		try (PrintStream output = new PrintStream(new File(filename))) {
+		try {
+			PrintStream output = new PrintStream(new File(filename));
 			for (int vis = 0; vis < visN; vis++) {
 				output.print(visParams[vis]+" ");
 			}
@@ -215,7 +217,17 @@ public class RBM {
 	}
     
     public static void main(String[] args) {
-    	sanityCheck();
+    	// sanityCheck();
+    	int nBatches = 600;
+    	int batchSize = 100;
+    	Data data = new Data(nBatches, batchSize, 784);
+    	data.readFromFile("mnist.txt"); 
+    	
+    	int layer1 = 1000;
+    	int layer2 = 500;
+    	int layer3 = 200;
+		StackRBMTrainer stack = new StackRBMTrainer("rbm1.uai",784, layer1,"rbm2.uai",layer2,"rbm3.uai",layer3);
+		stack.layerTrain(data.getData());
     	
     	/*
     	String filename = "rbm.uai";
