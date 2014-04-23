@@ -3,7 +3,7 @@ import il2.model.Table;
 
 public class RBMTrainerBP extends RBMTrainer{
     // ED-BP (RCR) settings:
-	public int    maxIterations = 100;
+	public int    maxIterations = 1;
 	public long   timeoutMillis = 0;    //no time-out
 	public double convThreshold = 1e-4;
 	
@@ -44,8 +44,8 @@ public class RBMTrainerBP extends RBMTrainer{
 	
 	@Override
 	public void trainBatch(RBM rbm, double[][] batch) {
-		super.trainBatch(rbm, batch);
-		rbm.updateBPTables(ie);
 		System.out.println("BP residual "+ ie.residual());
+		rbm.updateBPTables(ie);
+		super.trainBatch(rbm, batch);
 	}
 }

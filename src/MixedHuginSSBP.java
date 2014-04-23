@@ -59,6 +59,7 @@ public class MixedHuginSSBP extends BeliefPropagation {
     		Table[] tabs = collectTables(pair);
     		msg = unitTable(domain,var);
     		msg.multiplyAndProjectInto(tabs);
+    		msg.normalizeInPlace();
     		
     		// update messageProducts[varNode]
     		Table oldmsg = messages.get(pair);
@@ -70,8 +71,8 @@ public class MixedHuginSSBP extends BeliefPropagation {
     	else {
     		msg = messageProducts[var].copy();
     		msg.divideRelevantInto(messages.get(pair).values());
+    		msg.normalizeInPlace();
     	}
-    	msg.normalizeInPlace();
     	/*
     	if (Double.isNaN(msg.sum())) {
     		System.out.println("aaa");
@@ -91,6 +92,34 @@ public class MixedHuginSSBP extends BeliefPropagation {
         }
         return residual;
     }
+    
+    protected void dampUpdate(Table oldt, Table newt) {
+    	double[] oldv = oldt.values();
+    	double[] newv = newt.values();
+    	double alpha = 0.5;
+    	for (int i = 0; i < oldv.length; i++) 
+    		newv[i] = (1-alpha)*newv[i] + alpha*oldv[i];
+    }
+    /**
+     * This performs one BP iteration.
+     */
+    @Override
+    protected void iteration() {
+        residual = 0;
+        for ( Pair pair : scheduler.nextIteration() ) {
+            if ( isUnitTablePair(pair) ) continue;
+            Table msg = computeMessage(pair);
+            Table oldmsg = messages.get(pair); //oldMessages.get(pair);
+            double msgResidual = computeResidual(oldmsg,msg);
+            dampUpdate(oldmsg, msg); // damp messages
+            if ( msgResidual > residual ) residual = msgResidual;
+            messages.put(pair,msg);
+        }
+        updateIterationStatus();
+    }
+
+    
+    
 
     public double logPrEvidence() {
         makeValid();
