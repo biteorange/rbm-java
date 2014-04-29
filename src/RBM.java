@@ -217,9 +217,9 @@ public class RBM {
 	}
     
     public static void main(String[] args) {
-    	sanityCheck();
+    	// sanityCheck();
     	
-    	/*
+    	
     	int nBatches = 600;
     	int batchSize = 100;
     	Data data = new Data(nBatches, batchSize, 784);
@@ -230,6 +230,6 @@ public class RBM {
     	int layer3 = 200;
 		StackRBMTrainer stack = new StackRBMTrainer("rbm1.uai",784, layer1,"rbm2.uai",layer2,"rbm3.uai",layer3);
 		stack.layerTrain(data.getData());
-    	*/
+    	
     }
 }
